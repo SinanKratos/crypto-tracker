@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinamik Kripto Takip Tablosu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dinamik Kripto Takip Tablosu</h1>
+    </header>
+
+    <!-- Katman 1 Tablosu -->
+    <h2 style="text-align: center;">Katman 1</h2>
+    <table id="layer1-table">
+        <tr>
+            <th>Kripto Para</th>
+            <th>Fiyat (USD)</th>
+            <th>Piyasa Değeri (USD)</th>
+            <th>Dolaşımdaki Arz</th>
+            <th>Toplam Arz</th>
+        </tr>
+        <tr>
+            <td>XRP</td>
+            <td id="xrp-price">$2.44</td>
+            <td id="xrp-market-cap">$140B</td>
+            <td id="xrp-circulating-supply">52B XRP</td>
+            <td id="xrp-total-supply">100B XRP</td>
+        </tr>
+        <tr>
+            <td>Dogecoin (DOGE)</td>
+            <td id="doge-price">$0.447401</td>
+            <td id="doge-market-cap">$44.6B</td>
+            <td id="doge-circulating-supply">130B DOGE</td>
+            <td id="doge-total-supply">Sınırsız</td>
+        </tr>
+        <tr>
+            <td>Hedera (HBAR)</td>
+            <td id="hbar-price">-</td>
+            <td id="hbar-market-cap">-</td>
+            <td id="hbar-circulating-supply">-</td>
+            <td id="hbar-total-supply">-</td>
+        </tr>
+        <tr>
+            <td>Cardano (ADA)</td>
+            <td id="ada-price">-</td>
+            <td id="ada-market-cap">-</td>
+            <td id="ada-circulating-supply">-</td>
+            <td id="ada-total-supply">-</td>
+        </tr>
+        <tr>
+            <td>Solana (SOL)</td>
+            <td id="sol-price">-</td>
+            <td id="sol-market-cap">-</td>
+            <td id="sol-circulating-supply">-</td>
+            <td id="sol-total-supply">-</td>
+        </tr>
+    </table>
+
+    <script>
+        async function fetchCryptoData() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=xrp,dogecoin,hedera-hashgraph,cardano,solana&vs_currencies=usd&include_market_cap=true&include_supply=true');
+                if (!response.ok) {
+                    throw new Error("HTTP error! status: " + response.status);
+                }
+                const data = await response.json();
+
+                // Update Layer 1 Data
+                document.getElementById("xrp-price").innerText = `$${data.xrp.usd.toFixed(2)}`;
+                document.getElementById("xrp-market-cap").innerText = `$${(data.xrp.usd_market_cap / 1e9).toFixed(1)}B`;
+                document.getElementById("doge-price").innerText = `$${data.dogecoin.usd.toFixed(4)}`;
+                document.getElementById("doge-market-cap").innerText = `$${(data.dogecoin.usd_market_cap / 1e9).toFixed(1)}B`;
+                document.getElementById("hbar-price").innerText = `$${data['hedera-hashgraph'].usd.toFixed(4)}`;
+                document.getElementById("hbar-market-cap").innerText = `$${(data['hedera-hashgraph'].usd_market_cap / 1e9).toFixed(1)}B`;
+                document.getElementById("ada-price").innerText = `$${data.cardano.usd.toFixed(2)}`;
+                document.getElementById("ada-market-cap").innerText = `$${(data.cardano.usd_market_cap / 1e9).toFixed(1)}B`;
+                document.getElementById("sol-price").innerText = `$${data.solana.usd.toFixed(2)}`;
+                document.getElementById("sol-market-cap").innerText = `$${(data.solana.usd_market_cap / 1e9).toFixed(1)}B`;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                alert("Veri yükleme hatası. Lütfen tekrar deneyin.");
+            }
+        }
+
+        // Initial fetch and periodic updates
+        window.onload = () => {
+            fetchCryptoData();
+            setInterval(fetchCryptoData, 30000); // Update every 30 seconds
+        };
+    </script>
+</body>
+</html>
